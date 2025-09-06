@@ -75,9 +75,9 @@ export default function Featured() {
 
       {/* Modal para imagen o video */}
       {selectedItem && (
-        <div className="absolute inset-0 flex items-center justify-center z-50">
+        <div className="fixed inset-0 flex items-center justify-center z-50 bg-black/50 backdrop-blur-sm">
           <div className="relative">
-            {/* Botón cerrar siempre visible */}
+            {/* Botón cerrar */}
             <button
               className="absolute top-2 right-2 bg-white text-black rounded-full px-3 py-1 shadow z-50"
               onClick={() => setSelectedItem(null)}
@@ -92,14 +92,12 @@ export default function Featured() {
                 className="max-h-[80vh] max-w-[90vw] rounded-lg shadow-lg"
               />
             ) : (
-              <div className="relative">
-                <video
-                  src={selectedItem.src}
-                  controls
-                  autoPlay
-                  className="max-h-[80vh] max-w-[90vw] rounded-lg shadow-lg"
-                />
-              </div>
+              <video
+                src={selectedItem.src}
+                controls
+                autoPlay
+                className="max-h-[80vh] max-w-[90vw] rounded-lg shadow-lg"
+              />
             )}
           </div>
         </div>
