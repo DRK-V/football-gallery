@@ -7,7 +7,8 @@
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "strict": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "noEmit": true        // <-- TypeScript solo hará type checking
   },
-  "include": ["src"]
+  "include": ["src/main.tsx"]
 }
