@@ -1,4 +1,4 @@
-// src/pages/Gallery.jsx
+// src/pages/Gallery.tsx
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import { Heart, Share2, Download } from "lucide-react";
 import Hero from "../components/Hero";
@@ -6,10 +6,48 @@ import Featured from "../components/Featured";
 import Socials from "../components/Socials";
 import GalleryFilter from "../components/GalleryFilter";
 
+// --- Tipos ---
+interface Category {
+  id: string;
+  name: string;
+  count: number;
+}
+
+interface Filter {
+  id: string;
+  name: string;
+}
+
+interface ImageItem {
+  id: number;
+  type: "image";
+  src: string;
+  title: string;
+  description: string;
+  category: string;
+  filter: string;
+  likes: number;
+  date: string;
+}
+
+interface VideoItem {
+  id: number;
+  type: "video";
+  src: string;
+  titulo: string;
+  desc: string;
+  tag: string;
+  likes: number;
+  poster?: string;
+}
+
+type GalleryItem = ImageItem | VideoItem;
+
 export default function Gallery() {
   const defaultPoster = "/img/default-poster.jpg"; // fallback si falla el poster
 
-  const categories = [
+  // --- Categorías y filtros ---
+  const categories: Category[] = [
     { id: "todos", name: "Todos", count: 156 },
     { id: "partidos", name: "Partidos", count: 45 },
     { id: "entrenamientos", name: "Entrenamientos", count: 32 },
@@ -18,7 +56,7 @@ export default function Gallery() {
     { id: "trofeos", name: "Trofeos", count: 26 },
   ];
 
-  const filters = [
+  const filters: Filter[] = [
     { id: "todos", name: "Todos" },
     { id: "2024", name: "Temporada 2024" },
     { id: "2023", name: "Temporada 2023" },
@@ -26,7 +64,8 @@ export default function Gallery() {
     { id: "copa", name: "Copa del Rey" },
   ];
 
-  const galleryItems = [
+  // --- Galería ---
+  const galleryItems: GalleryItem[] = [
     {
       id: 1,
       type: "image",
@@ -49,16 +88,16 @@ export default function Gallery() {
       likes: 89,
       date: "2024-05-10",
     },
-   {
-  id: 3,
-  type: "video",
-  src: "/videos/700_F_95326106_luXBbZS4XBTn0d6EXJDS2aFVOtVjG9Ns_ST.mp4",
-  titulo: "La Hinchada en Acción",
-  desc: "Ambiente espectacular en el estadio",
-  tag: "aficion",
-  likes: 456,
-  poster: "/img/football-training-session-players.jpg" // miniatura del video
-},
+    {
+      id: 3,
+      type: "video",
+      src: "/videos/700_F_95326106_luXBbZS4XBTn0d6EXJDS2aFVOtVjG9Ns_ST.mp4",
+      titulo: "La Hinchada en Acción",
+      desc: "Ambiente espectacular en el estadio",
+      tag: "aficion",
+      likes: 456,
+      poster: "/img/football-training-session-players.jpg", // miniatura del video
+    },
     {
       id: 4,
       type: "image",
@@ -72,39 +111,43 @@ export default function Gallery() {
     },
   ];
 
-  const [selectedCategory, setSelectedCategory] = useState("todos");
-  const [selectedFilter, setSelectedFilter] = useState("todos");
-  const [searchTerm, setSearchTerm] = useState("");
-  const [selectedItem, setSelectedItem] = useState(null);
+  // --- Estados ---
+  const [selectedCategory, setSelectedCategory] = useState<string>("todos");
+  const [selectedFilter, setSelectedFilter] = useState<string>("todos");
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [selectedItem, setSelectedItem] = useState<GalleryItem | null>(null);
 
-  const modalVideoRef = useRef(null);
+  const modalVideoRef = useRef<HTMLVideoElement | null>(null);
 
-  // Filtrado ajustado para videos e imágenes
+  // --- Filtrado ---
   const filteredItems = useMemo(() => {
     return galleryItems.filter((item) => {
       const byCategory =
         selectedCategory === "todos" ||
         (item.type === "video" ? item.tag === selectedCategory : item.category === selectedCategory);
-      const byFilter = selectedFilter === "todos" || item.filter === selectedFilter;
+      const byFilter = selectedFilter === "todos" || (item as ImageItem).filter === selectedFilter;
       const bySearch =
-        ((item.title || item.titulo)?.toLowerCase().includes(searchTerm.toLowerCase())) ||
-        ((item.description || item.desc)?.toLowerCase().includes(searchTerm.toLowerCase()));
+        ((item as ImageItem).title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (item as VideoItem).titulo?.toLowerCase().includes(searchTerm.toLowerCase())) ||
+        ((item as ImageItem).description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          (item as VideoItem).desc?.toLowerCase().includes(searchTerm.toLowerCase()));
       return byCategory && byFilter && bySearch;
     });
   }, [galleryItems, selectedCategory, selectedFilter, searchTerm]);
 
+  // --- Cerrar modal ---
   const closeModal = () => {
     if (modalVideoRef.current) {
       try {
         modalVideoRef.current.pause();
         modalVideoRef.current.currentTime = 0;
-      } catch (e) {}
+      } catch {}
     }
     setSelectedItem(null);
   };
 
   useEffect(() => {
-    const onKey = (e) => {
+    const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") closeModal();
     };
     window.addEventListener("keydown", onKey);
@@ -178,8 +221,8 @@ export default function Gallery() {
 
                       {/* Overlay hover */}
                       <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition flex flex-col justify-end p-4 text-white">
-                        <h4 className="font-bold text-sm">{item.title || item.titulo}</h4>
-                        <p className="text-xs mb-2">{item.description || item.desc}</p>
+                        <h4 className="font-bold text-sm">{(item as ImageItem).title || (item as VideoItem).titulo}</h4>
+                        <p className="text-xs mb-2">{(item as ImageItem).description || (item as VideoItem).desc}</p>
                         <div className="flex gap-3 text-white">
                           <button className="hover:text-red-500" aria-label="Me gusta">
                             <Heart size={18} />
@@ -234,8 +277,8 @@ export default function Gallery() {
             )}
 
             <div className="p-4 text-center">
-              <h3 className="text-lg font-bold">{selectedItem.titulo || selectedItem.title}</h3>
-              <p className="text-gray-600 text-sm">{selectedItem.desc || selectedItem.description}</p>
+              <h3 className="text-lg font-bold">{selectedItem.type === "image" ? selectedItem.title : selectedItem.titulo}</h3>
+              <p className="text-gray-600 text-sm">{selectedItem.type === "image" ? selectedItem.description : selectedItem.desc}</p>
             </div>
           </div>
         </div>
