@@ -1,8 +1,8 @@
 import React from "react";
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar.jsx";
 import Footer from "./components/Footer.jsx";
-import Home from "./pages/Home.jsx";
+
 import Gallery from "./pages/Gallery.jsx";
 
 export default function App() {
@@ -10,7 +10,9 @@ export default function App() {
     <div className="font-sans">
       <Navbar />
       <Routes>
-        <Route path="/" element={<Home />} />
+        {/* Redirige automáticamente de / a /galería */}
+        <Route path="/" element={<Navigate to="/galería" replace />} />
+         {/*<Route path="/home" element={<Home />} />*/}
         <Route path="/galería" element={<Gallery />} />
       </Routes>
       <Footer />
