@@ -5,12 +5,9 @@ import App from "./App";
 import "./index.css";
 
 // Le decimos a TypeScript que document.getElementById("root") nunca será null
-const rootElement = document.getElementById("root")!;
-
-ReactDOM.createRoot(rootElement).render(
-  <React.StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
-  </React.StrictMode>
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <BrowserRouter>
+    <App />
+  </BrowserRouter>
 );
+
