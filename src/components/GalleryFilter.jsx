@@ -1,24 +1,4 @@
-interface Category {
-  id: string;
-  name: string;
-  count: number;
-}
-
-interface Filter {
-  id: string;
-  name: string;
-}
-
-interface GalleryFilterProps {
-  categories: Category[];
-  filters: Filter[];
-  selectedCategory: string;
-  setSelectedCategory: (id: string) => void;
-  selectedFilter: string;
-  setSelectedFilter: (id: string) => void;
-  searchTerm: string;
-  setSearchTerm: (value: string) => void;
-}
+import React from "react";
 
 export default function GalleryFilter({
   categories,
@@ -29,7 +9,7 @@ export default function GalleryFilter({
   setSelectedFilter,
   searchTerm,
   setSearchTerm,
-}: GalleryFilterProps) {
+}) {
   return (
     <aside className="w-full lg:w-64 shrink-0 space-y-6">
       {/* Buscar */}
@@ -56,9 +36,7 @@ export default function GalleryFilter({
             >
               <span>{c.name}</span>
               <span
-                className={`text-xs px-2 py-0.5 rounded ${
-                  selectedCategory === c.id ? "bg-white/20" : "bg-gray-100"
-                }`}
+                className={`text-xs px-2 py-0.5 rounded ${selectedCategory === c.id ? "bg-white/20" : "bg-gray-100"}`}
               >
                 {c.count}
               </span>
